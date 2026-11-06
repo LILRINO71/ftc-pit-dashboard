@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titan F1 Pit</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.min.js",
+  "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="backdrop-robot"></div>
+  <div class="backdrop-grid"></div>
+  <div class="grain"></div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="team-num" id="teamNum">----</span>
+    <span class="team-name" id="teamName">Set your team</span>
+  </div>
+  <div class="event">
+    <span id="eventName">No event</span>
+    <span class="event-sub" id="eventSub"></span>
+  </div>
+  <div class="status" role="status">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">offline</span>
+    <time class="clock" id="clock">--:--</time>
+  </div>
+</header>
+
+<div class="queue-banner" id="queueBanner" role="alert" hidden></div>
+
+<main>
+  <!-- Dashboard -->
+  <section class="view active" id="view-dash" aria-label="Dashboard">
+    <div class="dash">
+      <article class="panel hero" id="nextCard">
+        <div class="hero-top">
+          <h2 class="eyebrow" id="nextTitle">Next match</h2>
+          <span class="alliance-tag" id="nextAlliance"></span>
+        </div>
+        <div class="match-label" id="nextLabel">--</div>
+        <div class="countdown" id="countdown">--:--</div>
+        <p class="away" id="nextAway"></p>
+        <div class="progress">
+          <div class="ptext"><span id="pNow">On field: --</span><span id="pCount"></span></div>
+          <div class="pbar"><i id="pFill"></i><b id="pUs"></b></div>
+        </div>
+        <div class="vs" id="vs">
+          <div class="side" id="nextUs"></div>
+          <div class="side" id="nextThem"></div>
+        </div>
+        <div class="watch" id="watch" hidden></div>
+        <p class="predict" id="predict"></p>
+      </article>
+
+      <section class="panel stats" aria-label="Our numbers">
+        <h2 class="eyebrow" id="statsTitle">Our event</h2>
+        <dl class="stat-row">
+          <div><dt>Rank</dt><dd id="sRank">-</dd></div>
+          <div><dt>Record</dt><dd id="sRecord">-</dd></div>
+          <div><dt>OPR</dt><dd id="sOpr">-</dd></div>
+          <div><dt>Avg</dt><dd id="sAvg">-</dd></div>
+          <div><dt>Best</dt><dd id="sBest">-</dd></div>
+        </dl>
+        <svg class="spark" id="spark" viewBox="0 0 300 70" preserveAspectRatio="none" role="img" aria-label="Our match scores"></svg>
+      </section>
+
+      <section class="panel schedule" aria-label="Our matches">
+        <h2 class="eyebrow">Our matches</h2>
+        <ol class="sched" id="schedule"></ol>
+      </section>
+
+      <section class="panel rankings" aria-label="Rankings">
+        <h2 class="eyebrow" id="rankTitle">Rankings</h2>
+        <div class="rank-wrap"><table class="rank-table" id="rankings"></table></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Judge mode -->
+  <section class="view" id="view-judge" aria-label="Judges">
+    <div class="judge">
+      <div class="robot3d" id="robot3d">
+        <p class="robot3d-status" id="robot3dStatus"></p>
+        <span class="robot3d-caption" id="robot3dCaption"></span>
+      </div>
+      <aside class="panel slide-panel">
+        <div class="slide" id="slide"></div>
+        <div class="slide-dots" id="slideDots"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Match timer -->
+  <section class="view" id="view-timer" aria-label="Match timer">
+    <div class="timer">
+      <div class="timer-phase" id="timerPhase">Ready</div>
+      <div class="timer-time" id="timerTime">2:38</div>
+      <div class="timer-bar"><div id="timerFill"></div></div>
+      <p class="timer-keys"><kbd>Space</kbd> start / pause <kbd>R</kbd> reset <kbd>T</kbd> teleop only</p>
+    </div>
+  </section>
+
+  <!-- Checklist -->
+  <section class="view" id="view-check" aria-label="Checklist">
+    <div class="check-head">
+      <h2>Before we queue</h2>
+      <span id="checkCount"></span>
+      <button class="btn" id="checkReset">Clear <kbd>Backspace</kbd></button>
+    </div>
+    <ul class="checklist" id="checklist"></ul>
+  </section>
+
+  <!-- Settings -->
+  <section class="view" id="view-settings" aria-label="Settings">
+    <form class="panel settings" id="settingsForm">
+      <h2>Settings</h2>
+      <label>Team number <input name="team" inputmode="numeric" placeholder="7831"></label>
+      <label>Event code <input name="event" placeholder="USCALAMVS4"></label>
+      <label>Season <input name="season" inputmode="numeric"></label>
+      <label class="row"><input type="checkbox" name="demo"> Demo mode (replays a finished event)</label>
+      <div class="row">
+        <button class="btn primary" type="submit">Save</button>
+        <button class="btn" type="button" id="findEvents">Find our events</button>
+      </div>
+      <ul class="event-list" id="eventList"></ul>
+      <p class="hint">Data from ftcscout.org, refreshed every minute.</p>
+    </form>
+  </section>
+</main>
+
+<nav class="dock" id="tabs" aria-label="Screens">
+  <button data-view="dash" class="active"><kbd>1</kbd>Dashboard</button>
+  <button data-view="judge"><kbd>2</kbd>Judges</button>
+  <button data-view="timer"><kbd>3</kbd>Timer</button>
+  <button data-view="check"><kbd>4</kbd>Checklist</button>
+  <button data-view="settings"><kbd>S</kbd>Settings</button>
+</nav>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script type="module" src="judge3d.js"></script>
+</body>
+</html>
