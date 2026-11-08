@@ -3,11 +3,15 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { toCreasedNormals } from "three/addons/utils/BufferGeometryUtils.js";
 
 const host = document.getElementById("robot3d");
 const status = document.getElementById("robot3dStatus");
 const caption = document.getElementById("robot3dCaption");
-const url = (window.PIT_CONFIG && window.PIT_CONFIG.robotModel) || "models/robot.glb";
+const cfg = window.PIT_CONFIG || {};
+// app.js adds .fx on capable desktops; Pis and other low-power boards get the lighter model
+const lowPower = !document.documentElement.classList.contains("fx");
+const url = (lowPower && cfg.robotModelLite) || cfg.robotModel || "models/robot.glb";
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let renderer, scene, camera, pivot, parts = [], running = false, lowQuality = false;
@@ -33,8 +37,8 @@ function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(30, 1, 0.01, 100);
 
-  scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1410, 1.1));
-  const key = new THREE.DirectionalLight(0xffffff, 2.4);
+  scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1410, 0.85));
+  const key = new THREE.DirectionalLight(0xffffff, 2.9);
   key.position.set(3, 5, 4);
   scene.add(key);
   const rim = new THREE.DirectionalLight(0xff9a3c, 1.6);
@@ -98,6 +102,8 @@ function load() {
     const mid = new THREE.Vector3(0, size.y / 2, 0);
     model.traverse((o) => {
       if (!o.isMesh) return;
+      // the simplified model ships without normals: smooth curves, keep CAD edges sharp
+      if (!o.geometry.attributes.normal) o.geometry = toCreasedNormals(o.geometry, THREE.MathUtils.degToRad(35));
       o.material.side = THREE.FrontSide;
       if (o.material.metalness !== undefined) {
         o.material.metalness = Math.min(o.material.metalness, 0.6);
@@ -115,7 +121,7 @@ function load() {
       parts.push({ o, start, end });
     });
 
-    camera.position.set(radius * 2.6, radius * 1.5, radius * 2.6);
+    camera.position.set(radius * 2.15, radius * 1.4, radius * 2.15);
     camera.lookAt(0, size.y * 0.42, 0);
     status.textContent = "";
     host.classList.add("ready");

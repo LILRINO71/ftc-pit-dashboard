@@ -21,7 +21,7 @@ cat > ~/.config/systemd/user/pit-dashboard.service <<EOF
 Description=FTC pit dashboard web server
 
 [Service]
-ExecStart=/usr/bin/python3 -m http.server $PORT --bind 127.0.0.1 --directory $DIR
+ExecStart=/usr/bin/python3 $DIR/pi/serve.py $PORT $DIR
 Restart=always
 
 [Install]

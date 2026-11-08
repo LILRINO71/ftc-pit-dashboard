@@ -1,0 +1,12 @@
+{
+  "name": "pit-dashboard-model-tools",
+  "private": true,
+  "type": "module",
+  "description": "Converts an Onshape glTF export into the small GLB files judge mode loads",
+  "dependencies": {
+    "@gltf-transform/core": "^4.0.0",
+    "@gltf-transform/extensions": "^4.0.0",
+    "@gltf-transform/functions": "^4.0.0",
+    "meshoptimizer": "~0.22.0"
+  }
+}

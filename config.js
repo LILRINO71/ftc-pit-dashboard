@@ -8,6 +8,8 @@ window.PIT_CONFIG = {
 
   // 3D model shown in judge mode
   robotModel: "models/robot.glb",
+  // lighter copy for the Raspberry Pi
+  robotModelLite: "models/robot-pi.glb",
 
   refreshSeconds: 60,
   queueWhenMatchesAway: 3,
